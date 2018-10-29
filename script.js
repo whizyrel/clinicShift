@@ -3,20 +3,20 @@
     let uiController, dataController, appController;
 
     dataController = (() => {
-        let date, curMonth, curYear, monthsArr, currentMonthName, shiftArr, Month, Person, leaveSchedule;
+        let date, currMonth, currYear, monthsArr, currMonthName, shiftArr, Month, Person, leaveSchedule;
 
         date = new Date();
-        curYear = date.getFullYear();
-        curMonth = date.getMonth();
+        currYear = date.getFullYear();
+        currMonth = date.getMonth();
         monthsArr = [{ name: 'January', length: 31 }, { name: 'February', length: 28 }, { name: 'March', length: 31 }, { name: 'April', length: 30 }, { name: 'May', length: 31 }, { name: 'June', length: 30 }, { name: 'July', length: 31 }, { name: 'August', length: 31 }, { name: 'September', length: 30 }, { name: 'October', length: 31 }, { name: 'November', length: 30 }, { name: 'December', length: 31 }];
         shiftArr = ['8:00am - 2:00pm', '2:00pm - 8:00pm'];
-        currentMonthName = monthsArr[curMonth].name;
+        currMonthName = monthsArr[currMonth].name;
 
         Month = function (month) {
             this.name = () => {
                 return monthsArr[month].name;
             };
-            this.length = function () {
+            this.length = () => {
                 // false || true for leap year
                 return (this.leapStatus() === false) ? monthsArr[month].length : ++monthsArr[month].length;
             };
@@ -71,11 +71,10 @@
                 leaveLength: obj.leaveLength(),
                 leaveMonth: leaveMonth.name(),
                 leaveMonthLength: leaveMonth.length(),
-                startYear: curYear
+                startYear: currYear
             };
 
             // leave start date, added 1 so it never starts from 0;
- 
             // @ts-ignore
             data.startDate = Math.floor(Math.random() * data.leaveMonthLength) + 1;
 
@@ -84,17 +83,16 @@
             data.restDays = (data.leaveMonthLength - data.startDate);
 
             // (unmapped) days left in leave days, negative if end date is in current month; positive if th .update: subtracted 1
-            
             // @ts-ignore
             data.leaveDaysLeft = (data.leaveLength - data.restDays) - 1;
 
             // if leave month is 11: december, next month is 0, else next month is leave month + 1
             (month === 11) ? leaveMonthYear = {
                 nextMonth: 0, 
-                year: curYear + 1
+                year: currYear + 1
             } : leaveMonthYear = {
                 nextMonth: month + 1,
-                year: curYear
+                year: currYear
             };
 
             // @ts-ignore
@@ -102,7 +100,7 @@
 
             // following month Object
             // @ts-ignore
-            data.nextMonth = (new Month(leaveMonthYear.nextMonth)).name;
+            data.nextMonth = (new Month(leaveMonthYear.nextMonth)).name();
 
             // @ts-ignore
             data.nextMonthLength = (new Month(leaveMonthYear.nextMonth)).length();
@@ -126,7 +124,7 @@
 
                     // fix .name of undefined error from months === 10 monthsArr[nonsense]
 
-                    thirdMonth = new Month(_thirdMonth);
+                    thirdMonth = (new Month(_thirdMonth));
                     // @ts-ignore
                     data.thirdMonth = thirdMonth.name();
                     // @ts-ignore
@@ -154,8 +152,6 @@
 
                 // @ts-ignore
                 data.fullDate = `leave starts on ${data.startMonth} ${data.startDate}, ${data.startYear} and ends on ${data.endMonth} ${data.endDate}, ${data.endYear}`;
-            
-            
             // @ts-ignore
             } else if (data.leaveDaysLeft <= 0) {
                 // for rest days greater than leave length
@@ -182,7 +178,7 @@
                 return month;
                 // call method that saves stuff to DB
             },
-            getData: (monthNumber = curMonth) => {
+            getData: (monthNumber = currMonth) => {
                 let person, month;
                 month = new Month(monthNumber);
                 return {
@@ -196,7 +192,7 @@
             },
             createShift: (month) => {
                 // @ts-ignore
-                let shiftPool, shiftSchedule, lastEl;
+                let shiftPool, shiftSchedule,lastEl;
 
                 shiftSchedule = [];
                 shiftPool = ['M', 'N', 'O', 'O', 'L'];
