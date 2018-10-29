@@ -12,8 +12,10 @@
         shiftArr = ['8:00am - 2:00pm', '2:00pm - 8:00pm'];
         currentMonthName = monthsArr[curMonth].name;
 
-        Month = function (name, month) {
-            this.name = name;
+        Month = function (month) {
+            this.name = () => {
+                return monthsArr[month].name;
+            };
             this.length = function () {
                 // false || true for leap year
                 return (this.leapStatus() === false) ? monthsArr[month].length : ++monthsArr[month].length;
@@ -64,10 +66,10 @@
         leaveSchedule = (obj, month) => {
             let leaveMonth, leaveMonthYear, data;
             
-            leaveMonth = (new Month(monthsArr[month].name, month));
+            leaveMonth = new Month(month);
             data = {
                 leaveLength: obj.leaveLength(),
-                leaveMonth: leaveMonth.name,
+                leaveMonth: leaveMonth.name(),
                 leaveMonthLength: leaveMonth.length(),
                 startYear: curYear
             };
@@ -100,10 +102,10 @@
 
             // following month Object
             // @ts-ignore
-            data.nextMonth = (new Month(monthsArr[leaveMonthYear.nextMonth].name, leaveMonthYear.nextMonth)).name;
+            data.nextMonth = (new Month(leaveMonthYear.nextMonth)).name;
 
             // @ts-ignore
-            data.nextMonthLength = (new Month(monthsArr[leaveMonthYear.nextMonth].name, leaveMonthYear.nextMonth)).length();
+            data.nextMonthLength = (new Month(leaveMonthYear.nextMonth)).length();
   
             // @ts-ignore
             data.startMonth = data.leaveMonth;
@@ -124,14 +126,14 @@
 
                     // fix .name of undefined error from months === 10 monthsArr[nonsense]
 
-                    thirdMonth = (new Month(monthsArr[_thirdMonth].name, _thirdMonth));
+                    thirdMonth = new Month(_thirdMonth);
                     // @ts-ignore
-                    data.thirdMonth = thirdMonth.name;
+                    data.thirdMonth = thirdMonth.name();
                     // @ts-ignore
                     data.thirdMonthLength = thirdMonth.length();
 
                     // @ts-ignore
-                    data.endMonth = thirdMonth.name;
+                    data.endMonth = thirdMonth.name();
 
                     // data.endDate = (nextRemDays + thirdMonth.length());
                     // @ts-ignore
@@ -180,9 +182,9 @@
                 return month;
                 // call method that saves stuff to DB
             },
-            getData: () => {
+            getData: (monthNumber = curMonth) => {
                 let person, month;
-                month = new Month(currentMonthName, curMonth);
+                month = new Month(monthNumber);
                 return {
                     personObj: function (name, level) {
                         return person = new Person(name, level);
@@ -194,7 +196,7 @@
             },
             createShift: (month) => {
                 // @ts-ignore
-                let shiftPool, shiftSchedule, _leaveMonth, user, lastEl;
+                let shiftPool, shiftSchedule, lastEl;
 
                 shiftSchedule = [];
                 shiftPool = ['M', 'N', 'O', 'O', 'L'];
@@ -236,7 +238,7 @@
 
     appController = ((uiCtrl, dtCtrl) => {
         // @ts-ignore
-        let generateShift, initEventListener, DOM, setAnnualLeave, objects, data;
+        let generateShift, initEventListener, DOM, setAnnualLeave, objects;
 
         DOM = uiCtrl.getDOMStrings();
         objects = dtCtrl.getData();
@@ -253,22 +255,21 @@
             * gets leave and or leave schedule from DB
             */
             _leaveMonth = dtCtrl.setLeaveMonth();
+            
             const person = objects.personObj('israel', 5);
             console.log(dtCtrl.getLeaveSchedule(person, dtCtrl.setLeaveMonth()));
-            // console.log(person);
+            
             const person_1 = objects.personObj('israel', 6);
             console.log(dtCtrl.getLeaveSchedule(person_1, dtCtrl.setLeaveMonth()));
-            // console.log(person_1);
+
             const person_2 = objects.personObj('israel', 7);
             console.log(dtCtrl.getLeaveSchedule(person_2, _leaveMonth));
-            // console.log(person_2);
-
-            console.log('inside set Annual Leave Method');
         };
 
         generateShift = () => {
             let shiftSchedule;
-
+            
+            console.log(objects.monthObj().name());
             shiftSchedule = dtCtrl.createShift(objects.monthObj());
             console.log(shiftSchedule);
         };
