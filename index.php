@@ -7,8 +7,8 @@
     <title>Clinic</title>
 </head>
 <body>
-    <button class="genButton">Generate</button>
-    <!-- <input class="yearType" type="range" min="0" max="1" step="0" value="0"> -->
+    <button class="leaveButton">Set Annual Leave Month</button>
+    <button class="shiftButton">Shift Schedule</button>
     <button class="castButton">Broadcast</button>
 
     <script src="./script.js"></script>
